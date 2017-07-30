@@ -1,22 +1,66 @@
 #include <iostream>
 #include <vector>
 
-using std::vector;
-using std::pair;
+using namespace std;
 
-int acyclic(vector<vector<int> > &adj) {
-  //write your code here
-  return 0;
+class Vertices
+{
+	public:
+		bool exist,visited;
+		vector <int> paths;
+		
+	Vertices()
+	{
+		exist = true;
+		visited = false;
+		paths.resize(0);
+	}	
+};
+
+int acyclic_start(Vertices myvertices[], int n, int x)
+{
+	myvertices[x].visited = true;
+	for(int i=0; i<(int)myvertices[x].paths.size(); i++)
+	{
+		if(myvertices[myvertices[x].paths[i]].exist == true)
+		{
+			if(myvertices[myvertices[x].paths[i]].visited == true) //found a cycle
+				return 1;
+			else // continue on quest of finding the sink
+			{
+				int c = acyclic_start(myvertices,n,myvertices[x].paths[i]);
+				if(c == 1)
+					return 1;
+			}
+		}
+	}
+	myvertices[x].exist = false;
+	return 0;
 }
 
-int main() {
+int main()
+{
   size_t n, m;
-  std::cin >> n >> m;
-  vector<vector<int> > adj(n, vector<int>());
-  for (size_t i = 0; i < m; i++) {
+  int x =0;
+  int answer = 0;
+  cin >> n >> m;
+  
+  Vertices myvertices[n];
+  
+  for (size_t i = 0; i < m; i++)
+  {
     int x, y;
-    std::cin >> x >> y;
-    adj[x - 1].push_back(y - 1);
+    cin >> x >> y;
+    myvertices[x - 1].paths.push_back(y - 1);
   }
-  std::cout << acyclic(adj);
+  
+  for(int i=0; i<(int)n; i++)
+  {
+	  //cout << "x is: " << x << endl;
+	  answer = answer || acyclic_start(myvertices,n,x);
+	  x++;
+  }
+  
+  cout << answer;
+  return 0;
 }
