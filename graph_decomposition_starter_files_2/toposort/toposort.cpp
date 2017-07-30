@@ -1,32 +1,58 @@
 #include <iostream>
-#include <algorithm>
 #include <vector>
 
-using std::vector;
-using std::pair;
+using namespace std;
 
-void dfs(vector<vector<int> > &adj, vector<int> &used, vector<int> &order, int x) {
-  //write your code here
-}     
+class Vertices
+{
+	public:
+		bool exist;//,visited;
+		vector <int> paths;
+		
+	Vertices()
+	{
+		exist = true;
+		//visited = false;
+		paths.resize(0);
+	}	
+};
 
-vector<int> toposort(vector<vector<int> > adj) {
-  vector<int> used(adj.size(), 0);
-  vector<int> order;
-  //write your code here
-  return order;
+void acyclic_start(Vertices myvertices[], int n, int x, vector <int> &result)
+{
+	//myvertices[x].visited = true;
+	for(int i=0; i<(int)myvertices[x].paths.size(); i++)
+	{
+		if(myvertices[myvertices[x].paths[i]].exist == true)
+		{
+			acyclic_start(myvertices,n,myvertices[x].paths[i],result);
+		}
+	}
+	myvertices[x].exist = false;
+	result.push_back(x);
 }
 
-int main() {
+int main()
+{
   size_t n, m;
-  std::cin >> n >> m;
-  vector<vector<int> > adj(n, vector<int>());
-  for (size_t i = 0; i < m; i++) {
+  vector <int> result;
+  cin >> n >> m;
+  
+  Vertices myvertices[n];
+  
+  for (size_t i = 0; i < m; i++)
+  {
     int x, y;
-    std::cin >> x >> y;
-    adj[x - 1].push_back(y - 1);
+    cin >> x >> y;
+    myvertices[x - 1].paths.push_back(y - 1);
   }
-  vector<int> order = toposort(adj);
-  for (size_t i = 0; i < order.size(); i++) {
-    std::cout << order[i] + 1 << " ";
+  
+  for(int i=0; i<(int)n; i++)
+  {
+	  if(myvertices[i].exist != false)
+		acyclic_start(myvertices,n,i,result);
   }
+  
+  for(int i=0; i<(int)result.size(); i++)
+	  cout << result[result.size() - i -1] + 1 << " ";
+  return 0;
 }
